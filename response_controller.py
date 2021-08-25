@@ -17,10 +17,10 @@ async def user_mentions(message: discord.Message):
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ") + message.mentions[0].name + ' was mentioned')
 
     if message.mentions[0].id == int(os.getenv('user_nerdwords')):
-        if random.randint(0, 3) < 7:
+        if random.randint(0, 100) < 7:
             await message.channel.send('papa 🖐👁👄👁🖐')
     if message.mentions[0].id == int(os.getenv('user_spitfire')):
-        if random.randint(0, 4) < 7:
+        if random.randint(0, 100) < 7:
             await message.channel.send('mama 🖐👁👄👁🖐')
 
 async def reddit_promo(message: discord.Message):
