@@ -28,8 +28,8 @@ async def reddit_promo(message: discord.Message):
 
 async def argue_with_dad(message: discord.Message):
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ") + 'starting argument with dad')
-    if random.randint(0,100) > 50:
-        message.delete()
+    if random.randint(0,100) < 69:
+        await message.delete()
     elif random.randint(0,100) > 50:
         await message.reply(f"SHUT UP <@!{os.getenv('bot_dad')}>! I'm sick of your lame repetitive jokes!")
     else:
