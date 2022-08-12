@@ -2,6 +2,24 @@ import discord
 import asyncio
 import datetime
 
+# scans the message for commands
+async def scan_message(message: discord.Message):
+    # escape
+    if not message.content.startswith('~'):
+        return
+
+    # setup
+    tokens = message.content.split(" ")
+    command = tokens[0]
+
+    # routing
+    if ('~spam' in command):
+        await spam_command(tokens, message)
+    elif ('~clearall' in command):
+        await clearall_command(tokens, message)
+    elif ('~clearme' in command):
+        await clearme_command(tokens, message)
+
 # spams the mentioned user
 async def spam_command(tokens, message: discord.Message):
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ") + ' ~spam command')
@@ -41,21 +59,3 @@ async def clearall_command(tokens, message: discord.Message):
     async for m in message.channel.history(limit=int(tokens[1])):
         await m.delete()
     await message.channel.send('(╯°□°）╯︵ ┻━┻ Thread Nuked! None of you could play nicely so your toys have been taken away! （︶^︶）')
-        
-# scans the message for commands
-async def scan_message(message: discord.Message):
-    # escape
-    if not message.content.startswith('~'):
-        return
-
-    # setup
-    tokens = message.content.split(" ")
-    command = tokens[0]
-
-    # switch controller
-    if ('~spam' in command):
-        await spam_command(tokens, message)
-    elif ('~clearall' in command):
-        await clearall_command(tokens, message)
-    elif ('~clearme' in command):
-        await clearme_command(tokens, message)
