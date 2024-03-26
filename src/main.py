@@ -12,6 +12,11 @@ def on_exit():
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+
+if TOKEN is None:
+    print('DISCORD_TOKEN not found')
+    exit(1)
+
 client = discord.Client()
 log_file = open('logs/' + datetime.datetime.now().strftime("%Y-%m-%d") + '.txt', "a")
 sys.stdout = log_file
