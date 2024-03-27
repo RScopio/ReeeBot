@@ -1,7 +1,7 @@
 # ReeBot
 
-A Discord bot which gets angry every time someone uses the @everyone tag
+## A guide to making a Discord bot with LLMs
 
-Developer Portal: <https://discord.com/developers/applications/378427147393564683/information>
-Add to server: <https://discordapp.com/oauth2/authorize?client_id=378427147393564683&scope=bot>
+How to setup a discord bot: <https://discordpy.readthedocs.io/en/stable/discord.html>
+
 Use PM2 to start the bot: <https://pm2.keymetrics.io/docs/usage/quick-start/>
