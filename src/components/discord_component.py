@@ -7,7 +7,8 @@ from components import language_component
 
 def start():
 # load environment variables
-    load_dotenv('.env', override=True)
+    dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+    load_dotenv(dotenv_path, override=True)
     TOKEN = os.getenv('DISCORD_TOKEN')
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ") + 'DISCORD_TOKEN: ' + str(TOKEN))
     if TOKEN is None:
@@ -31,7 +32,7 @@ def start():
             return
 
         # read the last 13 messages from the channel
-        recent_messages = [msg async for msg in message.channel.history(limit=13)]
+        recent_messages = [msg async for msg in message.channel.history(limit=69)]
 
         # squash messages into a single string
         recent_messages.reverse()

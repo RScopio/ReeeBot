@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: ree.py (Integrated Terminal)",
-            "type": "python",
+            "name": "Python Reeeeee",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/ree.py",
+            "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal"
         }
     ]
