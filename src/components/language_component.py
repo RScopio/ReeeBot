@@ -4,8 +4,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Constants for model and token limits
-SELECTED_MODEL = 'microsoft/phi-2'
-MAX_NEW_TOKENS = 200
+SELECTED_MODEL = 'stabilityai/stablelm-2-1_6b-zephyr'
+MAX_NEW_TOKENS = 69
 SYSTEM_PROMPT = """
 ========== System Prompt ==========
 You are a discord bot named 'reeeeeeeeeeeee' that generates responses to messages. 
