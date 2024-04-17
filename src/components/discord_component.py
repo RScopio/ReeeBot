@@ -7,23 +7,6 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from components import language_component
 
-# class ReeBot(commands.Bot):
-#     @commands.slash_command(name='drip', description='Generate a response from the AI model.')
-#     async def drip(self, ctx, prompt: str):
-#         """Generate a response from the AI model."""
-        
-#         # defer response
-#         await ctx.defer()
-        
-#         # generate response
-#         print('ctx prompt = ' + prompt)
-#         response = language_component.generate_response(prompt)
-#         response = response[:2000]
-
-#         # follow up with response
-#         await ctx.followup.send(response)
-#         #await ctx.send(response)
-
 def start():
     print('Starting Discord component...')
     
@@ -39,17 +22,21 @@ def start():
 
     # initialize discord client
     bot = discord.Bot()
+
+    # bot slash commands
     @bot.command(name="ping", description="Sends the bot's latency.")
     async def ping(ctx): 
         print('ping command called')
         await ctx.respond(f"Pong! Latency is {bot.latency}")
+
     @bot.command(name="speak", description="Generate a response from the AI model.")
-    async def speak(ctx, prompt: str):
+    async def speak(ctx, prompt: discord.Option(str)):
         print('speak command called')
+        await ctx.response.defer()
         # generate response
         response = language_component.generate_response(prompt)
         response = response[:2000]
         # follow up with response
-        await ctx.send(response)
+        await ctx.followup.send(response)
 
     bot.run(TOKEN)

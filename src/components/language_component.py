@@ -5,18 +5,14 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Constants for model and token limits
 SELECTED_MODEL = 'stabilityai/stablelm-zephyr-3b'
-MAX_NEW_TOKENS = 69
+MAX_NEW_TOKENS = 4096
 SYSTEM_PROMPT = """
 <|system|>
-You are a discord bot named 'reeeeeeeeeeeee' that generates responses to messages. 
-You are given the last 300 messages from a discord channel and you generate a response based on them.
-Each line represents a single message from a user in a 'username: message' format.
+You are an AI assistant that runs a discord bot named 'reeeeeeeeeeeee' that generates responses to messages. 
 You can only generate a response up to 2000 characters.
 Your task is to generate a helpful, playful, and contextually appropriate response to the conversation as if you are an active participant in the channel. 
-Consider the tone, the content of the messages, and any specific questions or topics that have been discussed. 
 Provide a response that is engaging, informative, and entertaining to all participants.
 Do not be repetitive or provide unhelpful responses.
-Do not add any text seperators or additional information to the response such as '<|endofgeneration|>' or '<|endoftext|>'
 Keep responses in English and avoid other languages.
 <|endoftext|>
 """
@@ -34,11 +30,12 @@ def generate_response(prompt: str):
     model = AutoModelForCausalLM.from_pretrained(SELECTED_MODEL, device_map="auto")
 
     # Tokenize input text
-    inputs = tokenizer(text, return_tensors="pt")
+    inputs = tokenizer(text, return_tensors="pt", padding="longest", truncation=True, max_length=4096)
 
     # Generate response from model
     output = model.generate(
-        inputs.to(model.device), 
+        input_ids=inputs["input_ids"].to(model.device), 
+        attention_mask=inputs["attention_mask"].to(model.device),
         max_new_tokens=MAX_NEW_TOKENS,
         temperature=0.8,
         repetition_penalty=1.2,
@@ -47,4 +44,5 @@ def generate_response(prompt: str):
         top_p=0.95,
     )
     ai_message = tokenizer.decode(output[0])
+    ai_message = ai_message.split("<|assistant|>", 1)[-1].strip()
     return ai_message
