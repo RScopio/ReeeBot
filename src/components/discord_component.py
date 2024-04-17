@@ -33,10 +33,13 @@ def start():
     async def speak(ctx, prompt: discord.Option(str)):
         print('speak command called')
         await ctx.response.defer()
+
         # generate response
-        response = language_component.generate_response(prompt)
-        response = response[:2000]
+        output = language_component.generate_response(prompt)
+        response = "> " + f"<@{ctx.author.id}>: " + prompt + "\n\n" + output
+        
         # follow up with response
+        response = response[:2000]
         await ctx.followup.send(response)
 
     bot.run(TOKEN)
