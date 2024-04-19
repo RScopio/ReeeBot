@@ -1,48 +1,48 @@
+import asyncio
 import os
 import datetime
+from . import logger_component
 import discord
-from discord import Intents
+from discord.ext import commands
 from dotenv import load_dotenv
 from components import language_component
 
-def start():
-# load environment variables
-    load_dotenv('.env', override=True)
+def start(logger):
+    logger.tprint('Starting Discord component...')
+    
+    # load environment variables
+    dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+    load_dotenv(dotenv_path, override=True)
     TOKEN = os.getenv('DISCORD_TOKEN')
-    print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ") + 'DISCORD_TOKEN: ' + str(TOKEN))
-    if TOKEN is None:
-        print('DISCORD_TOKEN not found')
+    GUILD_IDS = os.getenv('DISCORD_GUILD_IDS')
+    if TOKEN is None or GUILD_IDS is None:
+        logger.tprint('DISCORD_TOKEN or DISCORD_GUILD_IDS not found')
         exit(1)
+    else:
+        logger.tprint('DISCORD_TOKEN and DISCORD_GUILD_IDS found')
+
+    GUILD_IDS = [int(guild_id) for guild_id in GUILD_IDS.split(",")]
 
     # initialize discord client
-    intents = Intents.default()
-    client = discord.Client(intents=intents)
+    bot = discord.Bot()
 
-    # event handlers
-    @client.event
-    async def on_ready():
-        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ") + 'Mother give me tendies')
+    # bot slash commands
+    @bot.command(name="ping", description="Sends the bot's latency.", guild_ids=GUILD_IDS)
+    async def ping(ctx): 
+        logger.tprint('ping command called')
+        await ctx.respond(f"Pong! Latency is {bot.latency}")
 
-    @client.event
-    async def on_message(message: discord.Message):
-
-        # ignore messages from the bot itself
-        if message.author == client.user:
-            return
-
-        # read the last 13 messages from the channel
-        recent_messages = [msg async for msg in message.channel.history(limit=13)]
-
-        # squash messages into a single string
-        recent_messages.reverse()
-        recent_messages = [f"{msg.author.name}: {msg.content}" for msg in recent_messages]
-        recent_messages = "\n".join(recent_messages)
+    @bot.command(name="speak", description="Generate a response from the AI model.", guild_ids=GUILD_IDS)
+    async def speak(ctx, prompt: discord.Option(str)):
+        logger.tprint('speak command called: ' + prompt)
+        await ctx.response.defer()
 
         # generate response
-        response = language_component.generate_response(recent_messages)
-
-        # trim response to 2000 characters
-        response = response[:2000]
-        await message.channel.send(response)
+        output = language_component.generate_response(prompt)
+        response = "> " + f"<@{ctx.author.id}>: " + prompt + "\n\n" + output
         
-    client.run(TOKEN)
+        # follow up with response
+        response = response[:2000]
+        await ctx.followup.send(response)
+
+    bot.run(TOKEN)
