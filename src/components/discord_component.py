@@ -3,7 +3,7 @@ import os
 import datetime
 from . import logger_component
 import discord
-from discord.ext import commands
+from discord import app_commands
 from dotenv import load_dotenv
 from components import language_component
 
@@ -24,25 +24,31 @@ def start(logger):
     GUILD_IDS = [int(guild_id) for guild_id in GUILD_IDS.split(",")]
 
     # initialize discord client
-    bot = discord.Bot()
+    client = discord.Client(intents=discord.Intents.default())
+    tree = discord.app_commands.CommandTree(client)
 
     # bot slash commands
-    @bot.command(name="ping", description="Sends the bot's latency.", guild_ids=GUILD_IDS)
-    async def ping(ctx): 
+    @tree.command(name="ping", description="Sends the bot's latency.")
+    async def ping(interaction): 
         logger.tprint('ping command called')
-        await ctx.respond(f"Pong! Latency is {bot.latency}")
+        await interaction.response.send_message(f"Pong! Latency is {client.latency}")
 
-    @bot.command(name="speak", description="Generate a response from the AI model.", guild_ids=GUILD_IDS)
-    async def speak(ctx, prompt: discord.Option(str)):
+    @tree.command(name="speak", description="Generate a response from the AI model.")
+    async def speak(interaction, prompt: str):
         logger.tprint('speak command called: ' + prompt)
-        await ctx.response.defer()
+        await interaction.response.defer()
 
         # generate response
         output = language_component.generate_response(prompt)
-        response = "> " + f"<@{ctx.author.id}>: " + prompt + "\n\n" + output
+        response = "> " + f"<@{interaction.user.display_name}>: " + prompt + "\n\n" + output
         
         # follow up with response
         response = response[:2000]
-        await ctx.followup.send(response)
+        await interaction.followup.send(response)
 
-    bot.run(TOKEN)
+    @client.event
+    async def on_ready():
+        await tree.sync()
+        logger.tprint(f'{client.user} has connected to Discord!')
+
+    client.run(TOKEN)
