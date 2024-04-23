@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-from components import logger_component
-from components import discord_component
+from components.logger_component import Logger
+from components.discord_component import DiscordComponent
 
-logger = logger_component.Logger()
+logger = Logger()
 logger.start()
 
-discord_component.start(logger)
+discord_component = DiscordComponent(logger)
+discord_component.start()
